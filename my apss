@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basthyan Brand-Bot AI | Premium Tech HUD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #030712; 
+            color: #e5e7eb;
+            -webkit-tap-highlight-color: transparent;
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        
+        .tech-panel {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(6, 182, 212, 0.15);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .tech-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 10px;
+            border-top: 2px solid #06b6d4; border-left: 2px solid #06b6d4;
+        }
+        .tech-panel::after {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 10px; height: 10px;
+            border-bottom: 2px solid #06b6d4; border-right: 2px solid #06b6d4;
+        }
+
+        .cyber-btn {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid #06b6d4;
+            color: #22d3ee;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .cyber-btn:active {
+            background: #06b6d4;
+            color: #000;
+            box-shadow: 0 0 20px #06b6d4;
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #06b6d4;
+            box-shadow: 0 0 10px #06b6d4, 0 0 20px #06b6d4;
+            top: 0; left: 0;
+            animation: scan 2.5s ease-in-out infinite;
+            opacity: 0;
+            z-index: 20;
+        }
+        .scanning .scanner-line { opacity: 1; }
+
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0%, 100% { text-shadow: none; }
+            92% { text-shadow: 2px 0 #06b6d4, -2px 0 #ec4899; }
+            94% { text-shadow: -2px 0 #06b6d4, 2px 0 #ec4899; }
+            96% { text-shadow: 2px 0 #06b6d4, -2px 0 #ec4899; }
+        }
+
+        /* Aturan khusus untuk eksport ke PDF */
+        @media print {
+            body {
+                background-color: #030712 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print { display: none !important; }
+            #input-section, #loading, header { display: none !important; }
+            main { max-width: 100% !important; margin: 0 !important; padding: 20px !important; }
+            #result-section { display: block !important; padding-bottom: 0 !important; }
+            .tech-panel { break-inside: avoid; page-break-inside: avoid; }
+            /* Sembunyikan tombol cetak di dalam PDF */
+            .export-btn-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500/30">
+
+    <!-- Navbar Tech/HUD -->
+    <header class="sticky top-0 z-50 bg-[#030712]/80 backdrop-blur-md border-b border-cyan-500/20 px-5 py-3 flex justify-between items-center no-print">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center text-cyan-400 font-black text-sm border border-cyan-400/50 relative">
+                <div class="absolute inset-0 bg-cyan-400/20 animate-pulse"></div>
+                B
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold tracking-tight text-sm text-white">BASTHYAN_OS</span>
+                <span class="text-[8px] font-mono text-cyan-400 tracking-widest">SYS.ONLINE // V.4.1</span>
+            </div>
+        </div>
+        <button onclick="location.reload()" class="font-mono text-[9px] font-bold text-cyan-400 hover:text-white border border-cyan-400/30 px-3 py-1.5 active:bg-cyan-400/20 transition-all">REBOOT</button>
+    </header>
+
+    <main class="max-w-md mx-auto px-5 py-6">
+        
+        <!-- Input Section -->
+        <section id="input-section" class="space-y-6">
+            <div class="space-y-1">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 mb-2">
+                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping"></span>
+                    TARGET_ACQUISITION
+                </div>
+                <h1 class="text-3xl font-black tracking-tighter text-white glitch-text">BRAND_FORGE</h1>
+                <p class="text-xs text-zinc-400 font-mono mt-1">INITIATE VISUAL & STRATEGY SYNTHESIS.</p>
+            </div>
+
+            <!-- Dropzone HUD -->
+            <div id="drop-area" class="w-full aspect-[4/3] tech-panel flex items-center justify-center overflow-hidden relative cursor-pointer group" onclick="document.getElementById('file-input').click()">
+                <input type="file" id="file-input" class="hidden" accept="image/*" onchange="previewImage(event)">
+                <div class="scanner-line"></div>
+                
+                <div id="upload-placeholder" class="text-center p-6 z-10">
+                    <div class="w-12 h-12 border border-dashed border-cyan-500/50 flex items-center justify-center mx-auto mb-3 text-cyan-400 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <p class="text-[10px] font-mono font-bold text-cyan-400 tracking-widest">TAP TO UPLOAD</p>
+                </div>
+
+                <div id="preview-container" class="hidden w-full h-full absolute inset-0 z-0">
+                    <img id="img-preview" class="w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#030712] to-transparent"></div>
+                    <div class="absolute bottom-3 right-3 border border-cyan-500/30 bg-black/60 backdrop-blur px-3 py-1 text-[9px] font-mono text-cyan-400">UPDATE_IMG</div>
+                </div>
+            </div>
+
+            <!-- Inputs -->
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-[9px] font-mono tracking-widest text-cyan-500 flex items-center gap-2">
+                        <span class="w-2 h-0.5 bg-cyan-500"></span> PARAM_01: DESCRIPTION (MANDATORY)
+                    </label>
+                    <textarea id="brand-desc" rows="2" placeholder="> Ketik detail produk, bahan, atau target pasarmu di sini..." class="w-full bg-[#030712] border border-cyan-500/20 text-red-500 p-3 text-sm font-mono focus:border-cyan-400 outline-none transition-all placeholder-cyan-900 resize-none tech-panel"></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[9px] font-mono tracking-widest text-cyan-500 flex items-center gap-2">
+                        <span class="w-2 h-0.5 bg-cyan-500"></span> PARAM_02: AESTHETIC VIBE
+                    </label>
+                    <select id="vibe-select" class="w-full bg-[#030712] border border-cyan-500/20 text-cyan-100 p-3 text-sm font-mono appearance-none outline-none focus:border-cyan-400 transition-all tech-panel">
+                        <option value="Cyberpunk">CYBERPUNK</option>
+                        <option value="Neo Tokyo">NEO TOKYO</option>
+                        <option value="Minimal Tech">MINIMAL TECH</option>
+                        <option value="Dark Matter">DARK MATTER</option>
+                        <option value="Synthwave">SYNTHWAVE</option>
+                        <option value="Matrix Terminal">MATRIX TERMINAL</option>
+                        <option value="Mecha Armor">MECHA ARMOR</option>
+                        <option value="Quantum Chrome">QUANTUM CHROME</option>
+                        <option value="Bio-Tech Organic">BIO-TECH ORGANIC</option>
+                        <option value="Holographic Glitch">HOLOGRAPHIC GLITCH</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button id="generate-btn" onclick="processBranding()" class="w-full cyber-btn py-4 font-bold text-xs flex items-center justify-center gap-2 mt-4">
+                <span>COMPILE_BUSINESS_ASSETS</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </button>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden py-24 flex flex-col items-center justify-center text-center">
+            <div class="relative w-16 h-16 mb-6">
+                <div class="absolute inset-0 border-2 border-cyan-500/20 rounded-full"></div>
+                <div class="absolute inset-0 border-2 border-cyan-400 border-t-transparent border-r-transparent rounded-full animate-spin"></div>
+                <div class="absolute inset-2 border-2 border-pink-500/20 rounded-full"></div>
+                <div class="absolute inset-2 border-2 border-pink-400 border-b-transparent border-l-transparent rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+            </div>
+            <h3 class="font-mono text-sm font-bold text-cyan-400 tracking-widest glitch-text">PROCESSING_DATA</h3>
+            <p class="font-mono text-[10px] text-cyan-700 mt-2">ANALYZING MARKET POTENTIAL & DESIGN ARCHITECTURE...</p>
+        </div>
+
+        <!-- Result Section -->
+        <section id="result-section" class="hidden space-y-4 pb-12 animate-in fade-in slide-in-from-bottom-8 duration-500">
+            
+            <!-- NEW: Logo & Brand Concept Showcase -->
+            <div class="tech-panel p-6 flex flex-col items-center justify-center border-t-2" id="brand-showcase-panel">
+                <p class="text-[8px] font-mono text-cyan-500 tracking-widest mb-6 uppercase w-full text-left">FINAL_BRAND_CONCEPT</p>
+                
+                <div class="flex flex-col items-center gap-4 py-4 w-full rounded-lg" id="mockup-bg">
+                    <!-- SVG Logo Container -->
+                    <div id="res-logo-svg" class="w-20 h-20 flex items-center justify-center transition-all duration-500">
+                        <!-- SVG Injected Here -->
+                    </div>
+                    
+                    <div class="text-center">
+                        <h2 id="res-name" class="text-4xl font-black tracking-tight leading-none transition-all duration-500">Nama</h2>
+                        <p id="res-tagline" class="text-xs mt-2 tracking-widest transition-all duration-500"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: READY TO USE ASSETS -->
+            <div class="tech-panel p-4 space-y-5 border-l-2 border-l-emerald-500">
+                <h3 class="text-[9px] font-mono font-bold tracking-widest text-emerald-400 border-b border-emerald-500/20 pb-2 flex items-center gap-2">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    READY-TO-USE ASSETS (COPY-PASTE)
+                </h3>
+                
+                <!-- IG Bio -->
+                <div>
+                    <span class="text-[8px] font-mono text-emerald-500 tracking-widest block mb-1">INSTAGRAM_BIO</span>
+                    <div class="bg-black/50 border border-emerald-500/30 p-3 rounded-sm">
+                        <p id="res-bio" class="text-xs text-white whitespace-pre-line"></p>
+                    </div>
+                </div>
+
+                <!-- Ad Copy -->
+                <div>
+                    <span class="text-[8px] font-mono text-emerald-500 tracking-widest block mb-1">ADVERTISEMENT_COPY (FB/IG ADS)</span>
+                    <div class="bg-black/50 border border-emerald-500/30 p-3 rounded-sm space-y-2">
+                        <p id="res-ad-head" class="text-sm font-bold text-emerald-300 leading-tight"></p>
+                        <p id="res-ad-body" class="text-xs text-zinc-300 whitespace-pre-line"></p>
+                    </div>
+                </div>
+
+                <!-- Content Ideas -->
+                <div>
+                    <span class="text-[8px] font-mono text-emerald-500 tracking-widest block mb-1">CONTENT_CALENDAR (TIKTOK/REELS)</span>
+                    <ul id="res-content-list" class="space-y-2 text-xs text-zinc-200 bg-black/50 border border-emerald-500/30 p-3 rounded-sm list-disc list-inside">
+                        <!-- Items injected by JS -->
+                    </ul>
+                </div>
+
+                <!-- Hashtags -->
+                <div>
+                    <span class="text-[8px] font-mono text-emerald-500 tracking-widest block mb-1">TARGETED_HASHTAGS</span>
+                    <p id="res-hashtags" class="text-[10px] text-emerald-400 font-mono break-words"></p>
+                </div>
+            </div>
+
+            <!-- Structured Colors -->
+            <div class="tech-panel p-4 space-y-4">
+                <div class="flex justify-between items-center border-b border-cyan-500/20 pb-2">
+                    <h3 class="text-[9px] font-mono font-bold tracking-widest text-cyan-400 flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                        STRUCTURED_COLOR_PALETTE
+                    </h3>
+                </div>
+                <div id="color-grid" class="grid grid-cols-5 gap-2 w-full">
+                    <!-- Colors injected by JS -->
+                </div>
+                <div class="bg-black/50 p-3 border-l-2 border-cyan-500">
+                    <p id="res-reasoning" class="font-mono text-[10px] text-cyan-100 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Fonts -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="tech-panel p-4">
+                    <h3 class="text-[8px] font-mono tracking-widest text-cyan-500 mb-2">TYPOGRAPHY.H1</h3>
+                    <p id="res-font-head" class="font-bold text-base text-white truncate">Font 1</p>
+                </div>
+                <div class="tech-panel p-4">
+                    <h3 class="text-[8px] font-mono tracking-widest text-cyan-500 mb-2">TYPOGRAPHY.BODY</h3>
+                    <p id="res-font-body" class="font-medium text-xs text-zinc-300 truncate">Font 2</p>
+                </div>
+            </div>
+
+            <!-- Visual Concept -->
+            <div class="tech-panel p-3">
+                <h3 class="text-[9px] font-mono font-bold tracking-widest text-cyan-400 px-2 pt-2 pb-3">SYSTEM_APPLICATIONS</h3>
+                <div class="grid grid-cols-2 gap-2 h-40">
+                    <div class="relative overflow-hidden border border-cyan-500/20 bg-black">
+                        <img id="grid-img-1" class="w-full h-full object-cover opacity-50 mix-blend-luminosity hover:mix-blend-normal transition-all">
+                        <div class="absolute inset-0 bg-cyan-500/10" id="overlay-color"></div>
+                    </div>
+                    <div class="grid grid-rows-2 gap-2">
+                        <div id="grid-2" class="flex items-center justify-center border relative overflow-hidden bg-black transition-all">
+                            <div class="absolute inset-0 opacity-20" id="grad-color"></div>
+                            <div id="box-logo" class="w-10 h-10 flex items-center justify-center z-10 transition-all"></div>
+                        </div>
+                        <div id="grid-4" class="border transition-all"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export to PDF Button -->
+            <button onclick="window.print()" class="w-full cyber-btn py-4 font-bold text-xs flex items-center justify-center gap-2 mt-6 export-btn-print">
+                <span>EXPORT_TO_PDF</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </button>
+
+        </section>
+    </main>
+
+    <script>
+        let base64Image = "";
+        const apiKey = "AIzaSyCuPyRk-xQ5n4iSMcxZI6QpoS05JNwuPHo"; 
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            
+            if (!file) return; 
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                base64Image = reader.result.split(',')[1];
+                document.getElementById('img-preview').src = reader.result;
+                document.getElementById('grid-img-1').src = reader.result;
+                document.getElementById('upload-placeholder').classList.add('hidden');
+                document.getElementById('preview-container').classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+
+        async function processBranding() {
+            const desc = document.getElementById('brand-desc').value;
+            const vibe = document.getElementById('vibe-select').value;
+
+            if (!base64Image || !desc) {
+                alert("SYSTEM ERROR: INPUT DATA MISSING.");
+                return;
+            }
+
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('drop-area').classList.add('scanning');
+
+            // Prompt diubah: Memaksa AI menghasilkan kode logo SVG dan struktur warna khusus UI/Brand
+            const prompt = `Anda adalah Brand Agency Elite. Pengguna menginginkan aset jualan SIAP PAKAI dengan LOGO dan WARNA berkualitas tinggi.
+            Produk: ${desc}. 
+            Nuansa: ${vibe}. 
+            
+            TUGAS:
+            1. Buat Palet Warna yang SANGAT HARMONIS dan tidak norak. Pastikan warna kontras satu sama lain untuk desain.
+            2. Desain LOGO berupa kode SVG murni. Harus minimalis, elegan, dan menggambarkan produk. (Format: HANYA tag <svg viewBox="0 0 100 100" fill="currentColor"> dan <path>/<rect>/<circle> didalamnya. Jangan pakai script/style aneh, cukup bentuk geometris simple).
+            3. Berikan copywriting siap copas.
+            
+            Output JSON WAJIB sesuai format ini:
+            { 
+                "name": "Nama Brand (Elegan/Komersil)", 
+                "tagline": "Slogan Bisnis", 
+                "ig_bio": "Bio IG siap pakai dengan emoji & CTA",
+                "ad_headline": "Judul Iklan Super Hook",
+                "ad_body": "Teks Iklan lengkap siap copas",
+                "content_ideas": ["Ide Video 1", "Ide Video 2", "Ide Video 3"],
+                "hashtags": "#hashtag1 #hashtag2",
+                "colors": {
+                    "primary": "Hex color utama (warna brand)",
+                    "secondary": "Hex color pendukung",
+                    "accent": "Hex color mencolok (untuk tombol)",
+                    "background": "Hex color sangat gelap/sangat terang untuk latar",
+                    "text": "Hex color yang kontras dengan background untuk teks"
+                }, 
+                "typography": {"head": "Montserrat", "body": "Open Sans"}, 
+                "logic": "Alasan singkat psikologi di balik warna & bentuk logo ini.",
+                "logo_svg": "<svg viewBox='0 0 100 100' fill='currentColor'>...</svg>"
+            }`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                { text: prompt },
+                                { inlineData: { mimeType: "image/png", data: base64Image } }
+                            ]
+                        }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+
+                const data = await response.json();
+                const result = JSON.parse(data.candidates[0].content.parts[0].text);
+                renderResults(result);
+
+            } catch (error) {
+                console.error(error);
+                alert("CONNECTION FAILED. RETRY.");
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('input-section').classList.remove('hidden');
+                document.getElementById('drop-area').classList.remove('scanning');
+            }
+        }
+
+        function renderResults(data) {
+            document.getElementById('drop-area').classList.remove('scanning');
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            // 1. Dynamic Font Loading
+            const headFont = data.typography.head.replace(/\s+/g, '+');
+            const bodyFont = data.typography.body.replace(/\s+/g, '+');
+            const fontLink = document.createElement('link');
+            fontLink.href = `https://fonts.googleapis.com/css2?family=${headFont}:wght@700;900&family=${bodyFont}:wght@400;500&display=swap`;
+            fontLink.rel = 'stylesheet';
+            document.head.appendChild(fontLink);
+
+            // 2. Render Concept Showcase (Logo + Typography + Colors)
+            const showcasePanel = document.getElementById('brand-showcase-panel');
+            const mockupBg = document.getElementById('mockup-bg');
+            const resName = document.getElementById('res-name');
+            const resTagline = document.getElementById('res-tagline');
+            const logoSvgContainer = document.getElementById('res-logo-svg');
+
+            showcasePanel.style.borderTopColor = data.colors.accent;
+            mockupBg.style.backgroundColor = data.colors.background;
+            
+            resName.innerText = data.name;
+            resName.style.fontFamily = `'${data.typography.head}', sans-serif`;
+            resName.style.color = data.colors.primary;
+            
+            resTagline.innerText = data.tagline.toUpperCase();
+            resTagline.style.fontFamily = `'${data.typography.body}', sans-serif`;
+            resTagline.style.color = data.colors.text;
+
+            logoSvgContainer.innerHTML = data.logo_svg;
+            logoSvgContainer.style.color = data.colors.accent;
+            
+            // 3. Render Ready-to-use Assets
+            document.getElementById('res-bio').innerText = data.ig_bio;
+            document.getElementById('res-ad-head').innerText = `"${data.ad_headline}"`;
+            document.getElementById('res-ad-body').innerText = data.ad_body;
+            document.getElementById('res-hashtags').innerText = data.hashtags;
+
+            const contentList = document.getElementById('res-content-list');
+            contentList.innerHTML = '';
+            data.content_ideas.forEach(idea => {
+                const li = document.createElement('li');
+                li.innerText = idea;
+                contentList.appendChild(li);
+            });
+
+            // 4. Render Structured Color Grid
+            const colorGrid = document.getElementById('color-grid');
+            colorGrid.innerHTML = '';
+            const colorRoles = [
+                { role: 'PRIMARY', hex: data.colors.primary },
+                { role: 'SECOND', hex: data.colors.secondary },
+                { role: 'ACCENT', hex: data.colors.accent },
+                { role: 'BG', hex: data.colors.background },
+                { role: 'TEXT', hex: data.colors.text }
+            ];
+
+            colorRoles.forEach((c) => {
+                colorGrid.innerHTML += `
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="w-full aspect-square border border-cyan-500/30 rounded-sm relative group shadow-lg" style="background: ${c.hex};">
+                            <div class="absolute inset-0 bg-white/0 group-hover:bg-white/20 transition-all cursor-crosshair" onclick="navigator.clipboard.writeText('${c.hex}'); alert('Copied: ${c.hex}')"></div>
+                        </div>
+                        <span class="text-[7px] font-mono text-cyan-500 uppercase">${c.role}</span>
+                        <span class="text-[8px] font-mono text-white">${c.hex}</span>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('res-reasoning').innerText = `> DESIGN_LOGIC: ${data.logic}`;
+            document.getElementById('res-font-head').innerText = data.typography.head;
+            document.getElementById('res-font-body').innerText = data.typography.body;
+
+            // 5. Apply Colors to System Applications Grid
+            const bLogo = document.getElementById('box-logo');
+            bLogo.innerHTML = data.logo_svg; // Insert SVG instead of letter
+            bLogo.style.color = data.colors.background;
+            
+            document.getElementById('grid-2').style.backgroundColor = data.colors.primary;
+            document.getElementById('grid-2').style.borderColor = data.colors.accent;
+            document.getElementById('grad-color').style.background = `radial-gradient(circle at center, ${data.colors.accent}, transparent)`;
+            
+            document.getElementById('grid-4').style.background = `repeating-linear-gradient(45deg, ${data.colors.background}, ${data.colors.background} 10px, ${data.colors.secondary} 10px, ${data.colors.secondary} 20px)`;
+            document.getElementById('grid-4').style.borderColor = data.colors.primary;
+
+            document.getElementById('overlay-color').style.backgroundColor = data.colors.primary;
+            document.getElementById('overlay-color').style.opacity = '0.3';
+        }
+    </script>
+</body>
+</html>
